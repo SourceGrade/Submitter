@@ -19,6 +19,8 @@
 
 package org.jagrkt.submitter
 
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
@@ -30,7 +32,7 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.named
 
-internal fun Project.createPrepareSubmissionTask(configuration: SubmitConfiguration) {
+internal fun Project.createPrepareSubmissionTask(configuration: SubmitConfigurationImpl) {
   tasks.create<Jar>("prepareSubmission") {
     outputs.upToDateWhen { false }
     group = "submit"
@@ -61,6 +63,11 @@ $errors
     from(main.allSource, test.allSource)
     with(configuration) {
       archiveFileName.set("$assignmentId-$lastName-$firstName-submission.jar")
+    }
+    project.buildDir.resolve("resources/main/submission-info.json").apply {
+      parentFile.mkdirs()
+      writeText(Json.encodeToString(configuration))
+      from(path)
     }
     with(test.allSource) {
       val testClasses = buildJsonArray {

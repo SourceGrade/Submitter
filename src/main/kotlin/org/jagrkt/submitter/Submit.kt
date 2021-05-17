@@ -19,6 +19,7 @@
 
 package org.jagrkt.submitter
 
+import kotlinx.serialization.Serializable
 import org.gradle.api.Project
 
 interface SubmitConfiguration {
@@ -28,7 +29,8 @@ interface SubmitConfiguration {
   var lastName: String?
 }
 
-private data class SubmitConfigurationImpl(
+@Serializable
+internal data class SubmitConfigurationImpl(
   override var assignmentId: String? = null,
   override var studentId: String? = null,
   override var firstName: String? = null,

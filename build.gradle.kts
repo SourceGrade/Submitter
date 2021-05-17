@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "org.jagrkt"
-version = "0.1.0"
+version = "0.2.0"
 
 repositories {
   mavenCentral()
@@ -40,7 +40,7 @@ gradlePlugin {
       id = "org.jagrkt.submitter"
       displayName = "JagrKt Submitter"
       description = "Gradle plugin for submitting source code for the JagrKt AutoGrader"
-      implementationClass = "org.jagrkt.submitter.Submitter"
+      implementationClass = "org.jagrkt.submitter.SubmitterPlugin"
     }
   }
 }

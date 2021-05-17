@@ -38,6 +38,8 @@ gradlePlugin {
   plugins {
     create("submitter") {
       id = "org.jagrkt.submitter"
+      displayName = "JagrKt Submitter"
+      description = "Gradle plugin for submitting source code for the JagrKt AutoGrader"
       implementationClass = "org.jagrkt.submitter.Submitter"
     }
   }
@@ -48,9 +50,11 @@ pluginBundle {
   vcsUrl = "https://github.com/JagrKt/Submitter"
   (plugins) {
     "submitter" {
-      displayName = "JagrKt Submitter"
-      description = "Gradle plugin for submitting source code for the JagrKt AutoGrader"
       tags = listOf("jagrkt", "assignment", "submission", "grading")
     }
+  }
+  mavenCoordinates {
+    groupId = project.group.toString()
+    artifactId = "plugin-submitter"
   }
 }

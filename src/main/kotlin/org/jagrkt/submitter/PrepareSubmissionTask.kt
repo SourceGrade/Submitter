@@ -28,12 +28,17 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.withType
 
 internal fun Project.createPrepareSubmissionTask(configuration: SubmitConfigurationImpl) {
   tasks.create<Jar>("prepareSubmission") {
+    if (configuration.requireTests) {
+      dependsOn(tasks.withType<Test>())
+    }
     outputs.upToDateWhen { false }
     group = "submit"
     doFirst {

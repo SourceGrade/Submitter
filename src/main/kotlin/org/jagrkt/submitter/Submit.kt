@@ -27,6 +27,7 @@ interface SubmitConfiguration {
   var studentId: String?
   var firstName: String?
   var lastName: String?
+  var requireTests: Boolean
 }
 
 @Serializable
@@ -35,6 +36,7 @@ internal data class SubmitConfigurationImpl(
   override var studentId: String? = null,
   override var firstName: String? = null,
   override var lastName: String? = null,
+  override var requireTests: Boolean = true,
 ) : SubmitConfiguration
 
 fun Project.submit(configure: SubmitConfiguration.() -> Unit) {

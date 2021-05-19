@@ -35,6 +35,11 @@ import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.withType
 
 internal fun Project.createPrepareSubmissionTask(configuration: SubmitConfigurationImpl) {
+
+  val mainResourcesFile = project.buildDir.resolve("resources/submit")
+  val submissionInfoFile = mainResourcesFile.resolve("submission-info.json")
+  val testMetaFile = mainResourcesFile.resolve("meta-meta.json")
+
   tasks.create<Jar>("prepareSubmission") {
     if (configuration.requireTests) {
       dependsOn(tasks.withType<Test>())
@@ -69,7 +74,7 @@ $errors
     with(configuration) {
       archiveFileName.set("$assignmentId-$lastName-$firstName-submission.jar")
     }
-    project.buildDir.resolve("resources/main/submission-info.json").apply {
+    submissionInfoFile.apply {
       parentFile.mkdirs()
       writeText(Json.encodeToString(configuration))
       from(path)
@@ -88,7 +93,7 @@ $errors
       val testMeta = buildJsonObject {
         put("testClasses", testClasses)
       }
-      project.buildDir.resolve("resources/main/test-meta.json").apply {
+      testMetaFile.apply {
         parentFile.mkdirs()
         writeText(testMeta.toString())
         from(path)

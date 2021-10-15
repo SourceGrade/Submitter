@@ -46,7 +46,7 @@ gradlePlugin {
 }
 
 pluginBundle {
-  website = "https://sourcegrade.org"
+  website = "https://www.sourcegrade.org"
   vcsUrl = "https://github.com/SourceGrade/Submitter"
   (plugins) {
     "submitter" {

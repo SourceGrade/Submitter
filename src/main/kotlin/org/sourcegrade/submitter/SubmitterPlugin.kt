@@ -1,5 +1,5 @@
 /*
- *   JagrKt Submitter - JagrKt.org
+ *   Jagr Submitter - SourceGrade.org
  *   Copyright (C) 2021 Alexander Staeding
  *   Copyright (C) 2021 Contributors
  *
@@ -17,7 +17,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.jagrkt.submitter
+package org.sourcegrade.submitter
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

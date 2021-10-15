@@ -7,7 +7,7 @@ plugins {
   kotlin("plugin.serialization")
 }
 
-group = "org.jagrkt"
+group = "org.sourcegrade"
 version = "0.4.0-SNAPSHOT"
 
 val kotlinxSerializationVersion: String by project
@@ -37,24 +37,24 @@ tasks {
 gradlePlugin {
   plugins {
     create("submitter") {
-      id = "org.jagrkt.submitter"
-      displayName = "JagrKt Submitter"
-      description = "Gradle plugin for submitting source code for the JagrKt AutoGrader"
-      implementationClass = "org.jagrkt.submitter.SubmitterPlugin"
+      id = "org.sourcegrade.submitter"
+      displayName = "Jagr Submitter"
+      description = "Gradle plugin for submitting source code for the Jagr AutoGrader"
+      implementationClass = "org.sourcegrade.submitter.SubmitterPlugin"
     }
   }
 }
 
 pluginBundle {
-  website = "https://jagrkt.org"
-  vcsUrl = "https://github.com/JagrKt/Submitter"
+  website = "https://sourcegrade.org"
+  vcsUrl = "https://github.com/SourceGrade/Submitter"
   (plugins) {
     "submitter" {
-      tags = listOf("jagrkt", "assignment", "submission", "grading")
+      tags = listOf("jagr", "assignment", "submission", "grading")
     }
   }
   mavenCoordinates {
     groupId = project.group.toString()
-    artifactId = "plugin-submitter"
+    artifactId = "submitter"
   }
 }

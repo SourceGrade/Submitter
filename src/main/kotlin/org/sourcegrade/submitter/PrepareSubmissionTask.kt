@@ -43,7 +43,7 @@ internal fun Project.createPrepareSubmissionTask(configuration: SubmitConfigurat
     val sourceSets = project.extensions.getByName("sourceSets") as SourceSetContainer
     from(*sourceSets.map { it.allSource }.toTypedArray())
     with(configuration) {
-      archiveFileName.set("$assignmentId-$lastName-$firstName-submission.jar")
+      archiveFileName.set("$assignmentId-$lastName-$firstName-submission.${archiveExtension ?: "jar"}")
     }
     doFirst {
       val errors = StringBuilder().apply {

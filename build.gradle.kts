@@ -3,13 +3,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("com.gradle.plugin-publish").version("0.14.0")
   `java-gradle-plugin`
-  val kotlinVersion = "1.5.0"
-  kotlin("jvm").version(kotlinVersion)
-  kotlin("plugin.serialization").version(kotlinVersion)
+  kotlin("jvm")
+  kotlin("plugin.serialization")
 }
 
 group = "org.jagrkt"
 version = "0.4.0-SNAPSHOT"
+
+val kotlinxSerializationVersion: String by project
 
 repositories {
   mavenCentral()
@@ -17,7 +18,6 @@ repositories {
 
 dependencies {
   implementation(gradleKotlinDsl())
-  val kotlinxSerializationVersion = "1.2.1"
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:$kotlinxSerializationVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")

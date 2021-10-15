@@ -21,24 +21,18 @@ package org.sourcegrade.submitter
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonArray
-import kotlinx.serialization.json.buildJsonObject
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.withType
 
 internal fun Project.createPrepareSubmissionTask(configuration: SubmitConfigurationImpl) {
 
   val mainResourcesFile = project.buildDir.resolve("resources/submit")
   val submissionInfoFile = mainResourcesFile.resolve("submission-info.json")
-  val testMetaFile = mainResourcesFile.resolve("meta-meta.json")
 
   tasks.create<Jar>("prepareSubmission") {
     if (configuration.requireTests) {
@@ -46,6 +40,11 @@ internal fun Project.createPrepareSubmissionTask(configuration: SubmitConfigurat
     }
     outputs.upToDateWhen { false }
     group = "submit"
+    val sourceSets = project.extensions.getByName("sourceSets") as SourceSetContainer
+    from(*sourceSets.map { it.allSource }.toTypedArray())
+    with(configuration) {
+      archiveFileName.set("$assignmentId-$lastName-$firstName-submission.jar")
+    }
     doFirst {
       val errors = StringBuilder().apply {
         with(configuration) {
@@ -63,39 +62,10 @@ $errors
 """
         )
       }
-    }
-    val main: SourceSet
-    val test: SourceSet
-    with(project.extensions.getByName("sourceSets") as SourceSetContainer) {
-      main = named<SourceSet>("main").get()
-      test = named<SourceSet>("test").get()
-    }
-    from(main.allSource, test.allSource)
-    with(configuration) {
-      archiveFileName.set("$assignmentId-$lastName-$firstName-submission.jar")
-    }
-    submissionInfoFile.apply {
-      parentFile.mkdirs()
-      writeText(Json.encodeToString(configuration))
-      from(path)
-    }
-    with(test.allSource) {
-      val testClasses = buildJsonArray {
-        for (file in files) {
-          srcDirs.asSequence()
-            .map(file::relativeTo)
-            .reduce { a, b -> if (a.path.length < b.path.length) a else b }
-            .path
-            .run(::JsonPrimitive)
-            .also(::add)
-        }
-      }
-      val testMeta = buildJsonObject {
-        put("testClasses", testClasses)
-      }
-      testMetaFile.apply {
+      val submissionInfo = configuration.toSubmissionInfo(sourceSets.map { it.toInfo() })
+      submissionInfoFile.apply {
         parentFile.mkdirs()
-        writeText(testMeta.toString())
+        writeText(Json.encodeToString(submissionInfo))
         from(path)
       }
     }

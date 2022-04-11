@@ -59,10 +59,13 @@ abstract class PrepareSubmissionTask : Jar() {
                 append("submission.", submit.archiveExtension ?: "jar")
             }
         )
+        setOnlyIf {
+            verifySubmit()
+            true
+        }
     }
 
-    @TaskAction
-    fun runTask() {
+    private fun verifySubmit() {
         val submit = project.extensions.getByType<SubmitExtension>()
         val errors = buildString {
             if (submit.assignmentId == null) appendLine("assignmentId")
@@ -78,6 +81,11 @@ $errors
 """
             )
         }
+    }
+
+    @TaskAction
+    fun runTask() {
+        val submit = project.extensions.getByType<SubmitExtension>()
         val submissionInfo = submit.toSubmissionInfo(
             project.extensions.getByType<SourceSetContainer>().map { it.toInfo() })
         submissionInfoFile.apply {

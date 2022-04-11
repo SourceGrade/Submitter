@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "org.sourcegrade"
-version = "0.5.1-SNAPSHOT"
+version = "0.5.1"
 
 val kotlinxSerializationVersion: String by project
 

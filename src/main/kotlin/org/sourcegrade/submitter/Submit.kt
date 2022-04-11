@@ -27,6 +27,7 @@ interface SubmitExtension {
     var firstName: String?
     var lastName: String?
     var requireTests: Boolean
+    var requirePublicTests: Boolean
     var archiveExtension: String?
 }
 
@@ -37,5 +38,6 @@ internal data class SubmitExtensionImpl(
     override var firstName: String? = null,
     override var lastName: String? = null,
     override var requireTests: Boolean = true,
+    override var requirePublicTests: Boolean = false,
     override var archiveExtension: String? = null,
 ) : SubmitExtension

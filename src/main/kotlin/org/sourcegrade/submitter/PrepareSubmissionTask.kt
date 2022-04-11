@@ -44,7 +44,10 @@ abstract class PrepareSubmissionTask : Jar() {
     init {
         val submit = project.extensions.getByType<SubmitExtension>()
         if (submit.requireTests) {
-            dependsOn(project.tasks.withType<Test>())
+            project.tasks.findByName("test")?.let { dependsOn(it) }
+        }
+        if (submit.requirePublicTests) {
+            project.tasks.findByName("publicTest")?.let { dependsOn(it) }
         }
         group = "submit"
         val sourceSets = project.extensions.getByName("sourceSets") as SourceSetContainer

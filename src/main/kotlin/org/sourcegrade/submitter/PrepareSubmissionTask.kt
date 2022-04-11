@@ -22,15 +22,12 @@ package org.sourcegrade.submitter
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.gradle.api.GradleException
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.withType
 
 @Suppress("LeakingThis")
 abstract class PrepareSubmissionTask : Jar() {

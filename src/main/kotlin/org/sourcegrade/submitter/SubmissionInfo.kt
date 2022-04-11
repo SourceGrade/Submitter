@@ -24,36 +24,36 @@ import org.gradle.api.tasks.SourceSet
 
 @Serializable
 internal data class SubmissionInfo(
-  val assignmentId: String,
-  val studentId: String,
-  val firstName: String,
-  val lastName: String,
-  val sourceSets: List<SourceSetInfo>,
+    val assignmentId: String,
+    val studentId: String,
+    val firstName: String,
+    val lastName: String,
+    val sourceSets: List<SourceSetInfo>,
 )
 
 @Serializable
 internal data class SourceSetInfo(
-  val name: String,
-  val files: List<String>,
+    val name: String,
+    val files: List<String>,
 )
 
-internal fun SubmitConfiguration.toSubmissionInfo(
-  sourceSets: List<SourceSetInfo>,
+internal fun SubmitExtension.toSubmissionInfo(
+    sourceSets: List<SourceSetInfo>,
 ) = SubmissionInfo(
-  requireNotNull(assignmentId) { "assignmentId" },
-  requireNotNull(studentId) { "studentId" },
-  requireNotNull(firstName) { "firstName" },
-  requireNotNull(lastName) { "lastName" },
-  sourceSets,
+    requireNotNull(assignmentId) { "assignmentId" },
+    requireNotNull(studentId) { "studentId" },
+    requireNotNull(firstName) { "firstName" },
+    requireNotNull(lastName) { "lastName" },
+    sourceSets,
 )
 
 internal fun SourceSet.getFiles(): List<String> {
-  return allSource.files.map { file ->
-    allSource.srcDirs.asSequence()
-      .map(file::relativeTo)
-      .reduce { a, b -> if (a.path.length < b.path.length) a else b }
-      .path
-  }
+    return allSource.files.map { file ->
+        allSource.srcDirs.asSequence()
+            .map(file::relativeTo)
+            .reduce { a, b -> if (a.path.length < b.path.length) a else b }
+            .path
+    }
 }
 
 internal fun SourceSet.toInfo() = SourceSetInfo(name, getFiles())

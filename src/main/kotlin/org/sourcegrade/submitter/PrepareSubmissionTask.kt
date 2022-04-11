@@ -22,52 +22,66 @@ package org.sourcegrade.submitter
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.gradle.api.GradleException
-import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 
-internal fun Project.createPrepareSubmissionTask(configuration: SubmitConfigurationImpl) {
+@Suppress("LeakingThis")
+abstract class PrepareSubmissionTask : Jar() {
 
-  val mainResourcesFile = project.buildDir.resolve("resources/submit")
-  val submissionInfoFile = mainResourcesFile.resolve("submission-info.json")
+    @get:OutputDirectory
+    val mainResourcesFile = project.buildDir.resolve("resources/submit")
 
-  tasks.create<Jar>("prepareSubmission") {
-    if (configuration.requireTests) {
-      dependsOn(tasks.withType<Test>())
-    }
-    outputs.upToDateWhen { false }
-    group = "submit"
-    val sourceSets = project.extensions.getByName("sourceSets") as SourceSetContainer
-    from(*sourceSets.map { it.allSource }.toTypedArray())
-    with(configuration) {
-      archiveFileName.set("$assignmentId-$lastName-$firstName-submission.${archiveExtension ?: "jar"}")
-    }
-    doFirst {
-      val errors = StringBuilder().apply {
-        with(configuration) {
-          if (assignmentId == null) appendLine("assignmentId")
-          if (studentId == null) appendLine("studentId")
-          if (firstName == null) appendLine("firstName")
-          if (lastName == null) appendLine("lastName")
+    @get:Internal
+    val submissionInfoFile = mainResourcesFile.resolve("submission-info.json")
+
+    init {
+        val submit = project.extensions.getByType<SubmitExtension>()
+        if (submit.requireTests) {
+            dependsOn(project.tasks.withType<Test>())
         }
-      }
-      if (errors.isNotEmpty()) {
-        throw GradleException(
-          """
+        group = "submit"
+        val sourceSets = project.extensions.getByName("sourceSets") as SourceSetContainer
+        from(*sourceSets.map { it.allSource }.toTypedArray())
+        from(submissionInfoFile)
+        archiveFileName.set(
+            buildString {
+                append(submit.assignmentId, "-")
+                append(submit.lastName, "-")
+                append(submit.firstName, "-")
+                append("submission.", submit.archiveExtension ?: "jar")
+            }
+        )
+    }
+
+    @TaskAction
+    fun runTask() {
+        val submit = project.extensions.getByType<SubmitExtension>()
+        val errors = buildString {
+            if (submit.assignmentId == null) appendLine("assignmentId")
+            if (submit.studentId == null) appendLine("studentId")
+            if (submit.firstName == null) appendLine("firstName")
+            if (submit.lastName == null) appendLine("lastName")
+        }
+        if (errors.isNotEmpty()) {
+            throw GradleException(
+                """
 There were some errors preparing your submission. The following required properties were not set:
 $errors
 """
-        )
-      }
-      val submissionInfo = configuration.toSubmissionInfo(sourceSets.map { it.toInfo() })
-      submissionInfoFile.apply {
-        parentFile.mkdirs()
-        writeText(Json.encodeToString(submissionInfo))
-        from(path)
-      }
+            )
+        }
+        val submissionInfo = submit.toSubmissionInfo(
+            project.extensions.getByType<SourceSetContainer>().map { it.toInfo() })
+        submissionInfoFile.apply {
+            parentFile.mkdirs()
+            writeText(Json.encodeToString(submissionInfo))
+        }
     }
-  }
 }

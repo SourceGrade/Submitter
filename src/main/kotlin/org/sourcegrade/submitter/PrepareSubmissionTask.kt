@@ -42,6 +42,7 @@ abstract class PrepareSubmissionTask : Jar() {
     val submissionInfoFile = mainResourcesFile.resolve("submission-info.json")
 
     init {
+        dependsOn("compileJava")
         val submit = project.extensions.getByType<SubmitExtension>()
         if (submit.requireTests) {
             project.tasks.findByName("test")?.let { dependsOn(it) }
